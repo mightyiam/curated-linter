@@ -92,7 +92,7 @@ Lints provided text
 - [`options`](#user-overrides)
 - [`cliEngineOptions`](#overriding-and-extending)
 
-#### `lintFiles(files, cliEngineOptions)`
+#### `lintFiles(files, options, cliEngineOptions)`
 
 Lints files
 
