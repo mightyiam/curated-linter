@@ -11,7 +11,7 @@ Makes curated ESLint linters, like [standard](http://standardjs.com/)
 - has a name (e.g. "standard")
 - has a curated ESLint configuration
 - probably has a curated set of [ESLint rules](http://eslint.org/docs/rules/)
-- may be [further configurable](#user-overrides) via `package.json`, to an exact, specified, extent
+- the extent to which the user is able to override and/or extend the linter’s configuration [is configurable](#user-overrides)
 - may or may not allow [using an official, curated, set of extensions](#curated-extensions)
 - may have either or both of an [API](#api) and a [CLI](#cli)
 - [API](#api) may have either or both of `lintText` and `lintFiles`, which represent [`executeOnText`](http://eslint.org/docs/developer-guide/nodejs-api#executeontext) and [`executeOnFiles`](http://eslint.org/docs/developer-guide/nodejs-api#executeonfiles), respectively
