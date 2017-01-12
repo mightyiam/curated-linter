@@ -27,7 +27,7 @@ const options = {
   gitIgnore: true
 }
 
-const cliEngineOptions = {
+const CLIEngineOptions = {
   ignore: false,
   useEslintrc: false,
   rules: {
@@ -36,7 +36,7 @@ const cliEngineOptions = {
   }
 }
 
-const noFoobarLinter = CuratedLinter('nofoobar', options, cliEngineOptions)
+const noFoobarLinter = CuratedLinter('nofoobar', options, CLIEngineOptions)
 
 module.exports = noFoobarLinter
 ```
@@ -63,7 +63,7 @@ cli(['**/*.js', '**/*.jsx'], formatter, process.argv.slice(2))
 
 ## API
 
-### `CuratedLinter(name, options, cliEngineOptions)`
+### `CuratedLinter(name, options, CLIEngineOptions)`
 
 Creates a curated linter
 
@@ -74,7 +74,7 @@ Creates a curated linter
   - `gitIgnore`:
     whether to ignore files that are ignored by a possibly existing `.gitignore`
   - [`curatedExtensions`](#curated-extensions)
-- `cliEngineOptions`:
+- `CLIEngineOptions`:
 	will be passed to [`CLIEngine`](http://eslint.org/docs/developer-guide/nodejs-api#cliengine)
 
 Returns a [`curatedLinter`](#curatedlinter)
@@ -83,23 +83,23 @@ Returns a [`curatedLinter`](#curatedlinter)
 
 The curated linter object. Its properties are described below:
 
-#### `lintText(text, options, cliEngineOptions)`
+#### `lintText(text, options, CLIEngineOptions)`
 
 Lints provided text
 
 - `text`:
   text to lint
 - [`options`](#user-overrides)
-- [`cliEngineOptions`](#overriding-and-extending)
+- [`CLIEngineOptions`](#overriding-and-extending)
 
-#### `lintFiles(files, options, cliEngineOptions)`
+#### `lintFiles(files, options, CLIEngineOptions)`
 
 Lints files
 
 - `files`:
   array of file glob patterns
 - [`options`](#overriding-and-extending)
-- [`cliEngineOptions`](#overriding-and-extending)
+- [`CLIEngineOptions`](#overriding-and-extending)
 
 #### `cli(defaultFiles, formatter, argv)`
 
@@ -108,7 +108,7 @@ The CLI API
 - `defaultFiles`:
   array of file glob patterns to lint in case not provided in `argv`
 - `formatter`:
-  either a string representing one of the [built-in ESLint formatters](http://eslint.org/docs/user-guide/formatters/) or a [custom formatter](http://eslint.org/docs/developer-guide/working-with-custom-formatters) function that will be called with both the `results` and the `cliEngineOptions`
+  either a string representing one of the [built-in ESLint formatters](http://eslint.org/docs/user-guide/formatters/) or a [custom formatter](http://eslint.org/docs/developer-guide/working-with-custom-formatters) function that will be called with both the `results` and the `CLIEngineOptions`
 
 ## User `package.json` options
 
@@ -120,7 +120,7 @@ If `options.packageJson` is `true`, then options from the user’s `package.json
   "foo-linter": {
     "options": {
     },
-    "cliEngineOptions": {
+    "CLIEngineOptions": {
     }
   }
 }
@@ -130,18 +130,18 @@ where `foo-linter` is the linter’s `name`, as provided to `CuratedLinter`.
 
 ## User overrides
 
-This is about implementing a policy regarding whether, what and how the user of the curated linter is allowed to override or extend, in the curated `options` and `cliEngineOptions` options objects.
+This is about implementing a policy regarding whether, what and how the user of the curated linter is allowed to override or extend, in the curated `options` and `CLIEngineOptions` options objects.
 
-When the user has [options in `package.json`](#user-packagejson-options) or when he passes `options` and `cliEngineOptions` to `lintText` or `lintFiles`, those will be merged into (clones of) your provided `options` and `cliEngineOptions` by flat assignment (`Object.assign`). This means that the user will be able to override any property of an options object.
+When the user has [options in `package.json`](#user-packagejson-options) or when he passes `options` and `CLIEngineOptions` to `lintText` or `lintFiles`, those will be merged into (clones of) your provided `options` and `CLIEngineOptions` by flat assignment (`Object.assign`). This means that the user will be able to override any property of an options object.
 
-To prevent these overrides entirely, to allow some overrides or to implement whatever policy you come up with, provide a proxy handler on a symbol property of `options` and/or `cliEngineOptions` and it will be used prior to the above mentioned assignment. The symbol is provided as `CuratedLinter.optionsProxyHandler`.
+To prevent these overrides entirely, to allow some overrides or to implement whatever policy you come up with, provide a proxy handler on a symbol property of `options` and/or `CLIEngineOptions` and it will be used prior to the above mentioned assignment. The symbol is provided as `CuratedLinter.optionsProxyHandler`.
 
 ### Example
 
 ```js
 const CuratedLinter = require('curated-linter')
 
-const cliEngineOptions = {
+const CLIEngineOptions = {
   extends: 'standard',
   globals: ['window'],
   [CuratedLinter.optionsProxyHandler]: {
@@ -155,7 +155,7 @@ const cliEngineOptions = {
   }
 }
 
-const myLinter = CuratedLinter('myLinter', {}, cliEngineOptions)
+const myLinter = CuratedLinter('myLinter', {}, CLIEngineOptions)
 module.exports = myLinter
 ```
 
@@ -165,4 +165,4 @@ This feature allows official, curated extensions to be automatically used if the
 
 An official, curated extension is a separate [ESLint sharable configuration package](http://eslint.org/docs/developer-guide/shareable-configs).
 
-Each member of a provided `options.curatedExtensions` array is expected to be a name of an ESLint shareable configuration. The `eslint-config-` prefix may be omitted. Each such package, *if the user has it installed*, will be pushed to the end of the `cliEngineOptions.baseConfig.extends` array (will be created if `undefined` and will be made into an array if `false`).
+Each member of a provided `options.curatedExtensions` array is expected to be a name of an ESLint shareable configuration. The `eslint-config-` prefix may be omitted. Each such package, *if the user has it installed*, will be pushed to the end of the `CLIEngineOptions.baseConfig.extends` array (will be created if `undefined` and will be made into an array if `false`).
