@@ -35,7 +35,7 @@ const getOptions = () => ({
   }
 })
 
-const noFoobarLinter = CuratedLinter('nofoobar', getOptions)
+const noFoobarLinter = new CuratedLinter('nofoobar', getOptions)
 
 module.exports = noFoobarLinter
 ```
@@ -44,7 +44,8 @@ module.exports = noFoobarLinter
 ```js
 const { cli } = require('.')
 
-const formatter = (result, options) => {
+const formatter = function (result, options) {
+  this // curatedLinter instance
   // ...
 }
 
@@ -62,7 +63,7 @@ cli(['**/*.js', '**/*.jsx'], formatter, process.argv.slice(2))
 
 ## API
 
-### `CuratedLinter(name, getOptions)`
+### `new CuratedLinter(name, getOptions)`
 
 Creates a curated linter
 
@@ -76,7 +77,7 @@ Creates a curated linter
   - `CLIEngineOptions`:
     will be passed to [`CLIEngine`](http://eslint.org/docs/developer-guide/nodejs-api#cliengine)
 
-Returns a [`curatedLinter`](#curatedlinter)
+Constructs a [`curatedLinter`](#curatedlinter)
 
 ### `curatedLinter`
 
@@ -105,7 +106,7 @@ The CLI API
 - `defaultFiles`:
   array of file glob patterns to lint in case not provided in `argv`
 - `formatter`:
-  either a string representing one of the [built-in ESLint formatters](http://eslint.org/docs/user-guide/formatters/) or a [custom formatter](http://eslint.org/docs/developer-guide/working-with-custom-formatters) function that will be called with both the `results` and the `CLIEngineOptions`
+  either a string representing one of the [built-in ESLint formatters](http://eslint.org/docs/user-guide/formatters/) or a [custom formatter](http://eslint.org/docs/developer-guide/working-with-custom-formatters) function that will be called with the `results` and on the `curatedLinter` instance context.
 
 ## User `package.json` options
 
@@ -159,7 +160,7 @@ const getOptions = () => (new Proxy({
   }, noSetHandler)
 }, noSetHandler))
 
-const myLinter = CuratedLinter('myLinter', getOptions)
+const myLinter = new CuratedLinter('myLinter', getOptions)
 module.exports = myLinter
 ```
 
