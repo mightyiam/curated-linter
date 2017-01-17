@@ -83,12 +83,12 @@ Constructs a [`curatedLinter`](#curatedlinter)
 
 The curated linter object. Its properties are described below:
 
-#### `lintText(text, options)`
+#### `lintText(texts, options)`
 
-Lints provided text
+Lints provided texts
 
-- `text`:
-  text to lint
+- `texts`:
+  array of texts to lint
 - [`options`](#user-overrides)
 
 #### `lintFiles(files, options)`
