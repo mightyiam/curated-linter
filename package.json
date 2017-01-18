@@ -1,0 +1,47 @@
+{
+  "name": "curated-linter",
+  "version": "0.0.0",
+  "description": "Creates curated linters, like standard",
+  "main": "lib/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "lint": "standard",
+    "unit": "ava",
+    "test": "npm run lint && npm run unit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mightyiam/curated-linter.git"
+  },
+  "keywords": [
+    "curated",
+    "linter",
+    "eslint",
+    "standard"
+  ],
+  "author": "Shahar Or <mightyiampresence@gmail.com> (mightyiam)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mightyiam/curated-linter/issues"
+  },
+  "homepage": "https://github.com/mightyiam/curated-linter#readme",
+  "devDependencies": {
+    "ava": "^0.17.0",
+    "is-plain-obj": "^1.1.0",
+    "lodash.ismatch": "^4.4.0",
+    "mock-path-with-simple-spy": "^4.0.0",
+    "standard": "^8.6.0"
+  },
+  "dependencies": {
+    "deep-assign": "^2.0.0",
+    "lint-files": "^1.0.0",
+    "lint-text": "^1.0.0"
+  },
+  "standard": {
+    "ignore": [
+      "lib/**/*.fixture"
+    ]
+  }
+}
