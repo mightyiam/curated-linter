@@ -13,7 +13,7 @@ Makes curated ESLint linters, like [standard](http://standardjs.com/)
 - probably has a curated set of [ESLint rules](http://eslint.org/docs/rules/)
 - the extent to which the user is able to override and/or extend the linter’s configuration [is configurable](#user-overrides)
 - may or may not allow [using an official, curated, set of extensions](#curated-extensions)
-- may have either or both of an [API](#api) and a [CLI](#cli)
+- may have either or both of an [API](#api) and a [CLI](#clidefaultfiles-formatter-argv)
 - [API](#api) may have either or both of `lintText` and `lintFiles`, which represent [`executeOnText`](http://eslint.org/docs/developer-guide/nodejs-api#executeontext) and [`executeOnFiles`](http://eslint.org/docs/developer-guide/nodejs-api#executeonfiles), respectively
 - CLI may use a built-in [ESLint formatter](http://eslint.org/docs/user-guide/formatters/), or a [custom](http://eslint.org/docs/developer-guide/working-with-custom-formatters) one
 
