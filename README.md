@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/mightyiam/curated-linter.svg?branch=master)](https://travis-ci.org/mightyiam/curated-linter)
 [![Standard - JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+[![codecov](https://codecov.io/gh/mightyiam/curated-linter/branch/master/graph/badge.svg)](https://codecov.io/gh/mightyiam/curated-linter)
 
 # curated-linter
 

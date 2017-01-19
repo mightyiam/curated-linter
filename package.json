@@ -10,6 +10,7 @@
     "lint": "standard",
     "unit": "ava",
     "coverage": "nyc npm run unit",
+    "report-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "test": "npm run lint && npm run coverage"
   },
   "repository": {
@@ -30,6 +31,7 @@
   "homepage": "https://github.com/mightyiam/curated-linter#readme",
   "devDependencies": {
     "ava": "^0.17.0",
+    "codecov": "^1.0.1",
     "is-plain-obj": "^1.1.0",
     "lodash.ismatch": "^4.4.0",
     "mock-path-with-simple-spy": "^4.0.0",
