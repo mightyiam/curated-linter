@@ -9,7 +9,8 @@
   "scripts": {
     "lint": "standard",
     "unit": "ava",
-    "test": "npm run lint && npm run unit"
+    "coverage": "nyc npm run unit",
+    "test": "npm run lint && npm run coverage"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
     "is-plain-obj": "^1.1.0",
     "lodash.ismatch": "^4.4.0",
     "mock-path-with-simple-spy": "^4.0.0",
+    "nyc": "^10.1.2",
     "standard": "^8.6.0"
   },
   "dependencies": {
@@ -43,5 +45,20 @@
     "ignore": [
       "lib/**/*.fixture"
     ]
+  },
+  "nyc": {
+    "checkCoverage": true,
+    "all": true,
+    "include": [
+      "lib/**/*.js"
+    ],
+    "exclude": [
+      "**/*.test.js",
+      "**/*.fixture"
+    ],
+    "functions": 100,
+    "branches": 100,
+    "lines": 100,
+    "statements": 100
   }
 }
