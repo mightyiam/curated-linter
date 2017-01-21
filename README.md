@@ -9,145 +9,189 @@ Makes curated ESLint linters, like [standard](http://standardjs.com/)
 ## What is a curated linter?
 
 - a linter based on [ESLint’s `CLIEngine`](http://eslint.org/docs/developer-guide/nodejs-api#cliengine)
-- has a name (e.g. "standard")
-- has a curated ESLint configuration
-- probably has a curated set of [ESLint rules](http://eslint.org/docs/rules/)
-- the extent to which the user is able to override and/or extend the linter’s configuration [is configurable](#user-overrides)
+- probably has a name (e.g. "standard")
+- probably has curated ESLint [configuration](http://eslint.org/docs/user-guide/configuring) and [rules](http://eslint.org/docs/rules/)
+- the extent to which the end-user is able to override and/or extend the curated configuration [is configurable](#end-user-overrides)
 - may or may not allow [using an official, curated, set of extensions](#curated-extensions)
-- may have either or both of an [API](#api) and a [CLI](#clidefaultfiles-formatter-argv)
-- [API](#api) may have either or both of `lintText` and `lintFiles`, which represent [`executeOnText`](http://eslint.org/docs/developer-guide/nodejs-api#executeontext) and [`executeOnFiles`](http://eslint.org/docs/developer-guide/nodejs-api#executeonfiles), respectively
-- CLI may use a built-in [ESLint formatter](http://eslint.org/docs/user-guide/formatters/), or a [custom](http://eslint.org/docs/developer-guide/working-with-custom-formatters) one
+- may have either or both of a [(promise) API](#api) and a [CLI](#cli)
+- and more features, that are not in ESLint
 
 ## Example
 
-`index.js`:
+In this example we create our curated linter as an npm package.
+
+### `index.js`
+
+For instantiation, we do not provide an `options` object—we provide a function that will return a new `options` object with each call—a getter.
+
 ```js
 const CuratedLinter = require('curated-linter')
 
+// `options` getter function
 const getOptions = () => ({
-  gitIgnore: true,
-  cliEngineOptions: {
+  name: 'nofoobar', // CLI name and `package.json` config key
+  packageJson: true, // read end user config from `package.json`
+  gitIgnore: true, // (also) ignore what git ignores
+  formatter: (results, options) => { // customize your CLI error output
+    return `${options.name}: Nope. Do not use \`foo\` or \`bar\``
+    // or… something more real than this
+  },
+  CLIEngineOptions: { // options for ESLint’s `CLIEngine`
     ignore: false,
     useEslintrc: false,
-    rules: {
-      'id-blacklist': ['foo', 'bar']
-      // ...
+    rules: { // http://eslint.org/docs/rules/
+      'id-blacklist': ['foo', 'bar'] // http://eslint.org/docs/rules/id-blacklist
+      // your usage may include all your favorite rules!
     }
+    // for more `CLIEngine` options: http://eslint.org/docs/developer-guide/nodejs-api#cliengine
   }
+  // not all curated-linter options are not used in this example
 })
 
-const noFoobarLinter = new CuratedLinter('nofoobar', getOptions)
+const noFoobar = new CuratedLinter(getOptions)
 
-module.exports = noFoobarLinter
+// The API is ready. Now just export it!
+module.exports = noFoobar
 ```
 
-`cli.js`:
-```js
-const { cli } = require('.')
+But, wait, tools like this are mostly used from the CLI, right? *Right*. No worries. We have you covered:
 
-const formatter = function (result, options) {
-  this // curatedLinter instance
-  // ...
-}
-
-cli(['**/*.js', '**/*.jsx'], formatter, process.argv.slice(2))
-```
-
-`package.json`:
+### `package.json`:
 ```json
 {
-	"name": "foobar-linter",
+	"name": "nofoobar",
 	"main": "index.js",
-	"bin": { "foobar-lint": "cli.js" }
+	"bin": { "nofoobar": "index.js" }
 }
 ```
+
+Yes, the CLI is the same module as the API! If you wish to provide your end users with a CLI, then just specify the `bin` property.
 
 ## API
 
-### `new CuratedLinter(name, getOptions)`
+### `new CuratedLinter(getOptions)`
 
-Creates a curated linter
+> Constructs a curated linter
 
-- `name`:
-  machine name of the linter for use as key in users’ `package.json`
-- `getOptions`: a function that always returns your `options` object:
-  - [`packageJson`](#user-packagejson-options)
-  - `gitIgnore`:
-    whether to ignore files that are ignored by a possibly existing `.gitignore`
-  - [`curatedExtensions`](#curated-extensions)
-  - `CLIEngineOptions`:
-    will be passed to [`CLIEngine`](http://eslint.org/docs/developer-guide/nodejs-api#cliengine)
+`getOptions` must be a function that returns a new [`options`](#options) object with each call.
 
-Constructs a [`curatedLinter`](#curatedlinter)
+### `options`
 
-### `curatedLinter`
+> Contains all of the configuration, policy and behavior of a desired curated linter
 
-The curated linter object. Its properties are described below:
+The `options` object is provided to the curated linter instance firstly via the `getOptions` [constructor](#new-curatedlintergetoptions) argument.
 
-#### `lintText(texts, options)`
+It can also be provided to the [`lintText`](#linttexttext-options) and [`lintFiles`](#lintfilesfiles-options) methods, for the sake of [possibly allowing the end users to override or extend the curated configuration](#end-user-overrides).
 
-Lints provided texts
+Following are all of the possible properties of `options`:
 
-- `texts`:
-  array of texts to lint
-- [`options`](#user-overrides)
+#### `name`
 
-#### `lintFiles(files, options)`
+> Machine name of the curated linter
 
-Lints files
+#### `packageJson`
 
-- `files`:
-  array of file glob patterns
-- [`options`](#overriding-and-extending)
+> Whether to allow [end user configuration via `package.json`](#end-user-configuration-via-packagejson)
 
-#### `cli(defaultFiles, formatter, argv)`
+#### `gitIgnore`
 
-The CLI API
+> Whether to (also) ignore according to `.gitignore`
 
-- `defaultFiles`:
-  array of file glob patterns to lint in case not provided in `argv`
-- `formatter`:
-  either a string representing one of the [built-in ESLint formatters](http://eslint.org/docs/user-guide/formatters/) or a [custom formatter](http://eslint.org/docs/developer-guide/working-with-custom-formatters) function that will be called with the `results` and on the `curatedLinter` instance context.
+This determines whether, in addition to any other ignore configuration, to ignore files that are ignored by a possibly existing `.gitignore`.
 
-## User `package.json` options
+#### `ignore`
 
-If `options.packageJson` is `true`, then options from the user’s `package.json` will be loaded and assigned as explained in [user overrides](#user-overrides). The options will have to be stored in the following format:
+> List of [glob](https://www.npmjs.com/package/glob#glob-primer) file patterns to ignore
+
+#### `curatedExtensions`
+
+> List of [official curated extensions](#curated-extensions)
+
+#### `CLIEngineOptions`
+
+> Will be passed to [`CLIEngine`](http://eslint.org/docs/developer-guide/nodejs-api#cliengine)
+
+This is where you may define your rules, plugins, etc.
+
+Tip: if you can’t find a certain property on this interface, take a look at the `baseConfig` property.
+
+#### `formatter`
+
+> Formats the CLI error messages
+
+If this is a string, it must represent a [built-in ESLint formatter](http://eslint.org/docs/user-guide/formatters/).
+
+Otherwise, it must be a function. It will be called as `formatter(results, options)`. Except for the `options` argument, the signature is identical to [ESLint formatters](http://eslint.org/docs/developer-guide/working-with-custom-formatters).
+
+The `options` provided will be post [user overrides](#user-overrides).
+
+#### `defaultFiles`
+
+> Files to lint by default
+
+Whether via the CLI or via `#lintFiles`, if no files provided, these will be linted.
+
+An array of [glob](https://www.npmjs.com/package/glob#glob-primer)s.
+
+### `#lintText(text, options)`
+
+> Lints provided text
+
+- `text`: text (source code) to lint
+- [`options`](#options)
+- returns a promise of the [ESLint results object](#the-eslint-results-object)
+
+### `#lintFiles(files, options)`
+
+> Lints files
+
+- `files`: array of [glob](https://www.npmjs.com/package/glob#glob-primer)s of files to lint
+- [`options`](#options)
+- returns a promise of the [ESLint results object](#the-eslint-results-object)
+
+### The ESLint results object
+
+> Resolved value of promises returned by `#lintFiles` and `#lintText`
+
+Documentation of the ESLint results object can be found in [ESLint’s `#executeOnFiles` documentation](http://eslint.org/docs/developer-guide/nodejs-api#executeonfiles).
+
+## End user configuration via `package.json`
+
+If [`options.packageJson`](#packagejson-1) is `true`, then options from a *certain property* of the end user’s `package.json` will be read and applied as explained in [user overrides](#user-overrides). That *certain property* is [`options.name`](#name).
+
+For example if `options.name === 'nofoobar'`:
 
 ```json
 {
   "name": "the-users-package",
-  "foo-linter": {
-    "CLIEngineOptions": {
-      "rules": {
-        "yoda": "error"
-      }
-    }
+  "nofoobar": {
+    "ignore": ["**/*.test.js"]
   }
 }
 ```
 
-where `foo-linter` is the linter’s `name`, as provided to `CuratedLinter`.
+## End user overrides
 
-## User overrides
+This is about implementing a policy regarding *whether*, *what* and *how* the end user of the curated linter is allowed to override or extend, the curated `options`.
 
-This is about implementing a policy regarding whether, what and how the user of the curated linter is allowed to override or extend, in the curated `options` object.
+You may implement whatever policy you like, by having your `getOptions` return a version of `options` that is protected using proxies.
 
-You may implement whatever policy you like, by having your `getOptions` return a version of `options` that is somehow protected. For example, you may protect it using a deep `Object.freeze` or nested proxies.
+Whether from [end user options in `package.json`](#end-user-configuration-via-packagejson) or from the end user passing `options` to `lintText` or `lintFiles`, those user `options` will be merged into the `options` that your `getOptions` returned, using [deep assignment](https://www.npmjs.com/package/deep-assign). This means that, if your `getOptions` provides an unprotected `options`, the user will be able to override any property in that tree.
 
-When the user has [options in `package.json`](#user-packagejson-options) or when he passes `options` to `lintText` or `lintFiles`, those will be merged into the `options` that your `getOptions` returned by [deep assignment](https://www.npmjs.com/package/deep-assign). This means that, if your `getOptions` provides an unprotected `options`, the user will be able to override any property in that tree.
+Overrides occur on method invocation (the CLI also uses those methods). On each such invocation, your curated `options` are retrieved by calling your `getOptions`. Thus, overrides applied on one method call will *not* persist on the instance.
 
-### Example of protected `options` using a proxy
+### Example of protected `options` using proxies
 
-In the following example, the only allowed override is that globals can be added.
+The only allowed override is that the `id-blacklist` rule can be *added more identifiers*:
 
 ```js
 const CuratedLinter = require('curated-linter')
 
-const noSetHandler = {
+const frozen = {
   set: () => false
 }
 
-const appendHandler = {
+const append = {
   set: (target, property, value) => {
     target.push(value) // convert setting into appending
     return true
@@ -156,19 +200,26 @@ const appendHandler = {
 
 const getOptions = () => (new Proxy({
   CLIEngineOptions: new Proxy({
-    extends: 'standard',
-    globals: new Proxy(['window'], appendHandler)
-  }, noSetHandler)
-}, noSetHandler))
+    name: 'nofoobar',
+    rules: new Proxy({
+      'id-blacklist': new Proxy([
+        'foo',
+        'bar'
+      ], append)
+    }, frozen)
+  }, frozen)
+}, frozen))
 
-const myLinter = new CuratedLinter('myLinter', getOptions)
-module.exports = myLinter
+const noFooBar = new CuratedLinter(getOptions)
+module.exports = noFooBar
 ```
+
+As you can see, using proxies, it is possible to implement any override/extension policy.
 
 ## Curated extensions
 
-This feature allows official, curated extensions to be automatically used if the user has any of them installed.
+This feature allows official, curated extensions to be automatically used if the end user has any of them installed.
 
 An official, curated extension is a separate [ESLint sharable configuration package](http://eslint.org/docs/developer-guide/shareable-configs).
 
-Each member of a provided `options.curatedExtensions` array is expected to be a name of an ESLint shareable configuration. The `eslint-config-` prefix may be omitted. Each such package, *if the user has it installed*, will be pushed to the end of the `options.CLIEngineOptions.baseConfig.extends` array (will be created if `undefined` and will be made into an array if `false`).
+Each member of a provided [`options.curatedExtensions`](#curatedextensions) array is expected to be a name of an ESLint shareable configuration. The `eslint-config-` prefix may be omitted. Each such package, *if the end user has it installed*, will be pushed to the end of the [`options.CLIEngineOptions`](#cliengineoptions)`.baseConfig.extends` array (will be created if `undefined` and will be made into an array if `false`).
