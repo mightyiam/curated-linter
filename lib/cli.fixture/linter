@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+const CuratedLinter = require('..')
+
+// eslint-disable-next-line no-new
+new CuratedLinter(() => ({
+  name: 'linter',
+  formatter: results => JSON.stringify(results),
+  CLIEngineOptions: {
+    baseConfig: {
+      extends: 'standard'
+    }
+  }
+}))
