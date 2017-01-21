@@ -2,9 +2,15 @@
 [![Standard - JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 [![codecov](https://codecov.io/gh/mightyiam/curated-linter/branch/master/graph/badge.svg)](https://codecov.io/gh/mightyiam/curated-linter)
 
-# curated-linter
+# curated-linter (WIP)
 
 Makes curated ESLint linters, like [standard](http://standardjs.com/)
+
+## Work in progress
+
+Not all documented features are implemented.
+
+Feel free to contribute.
 
 ## Table of contents
 
