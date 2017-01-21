@@ -95,6 +95,12 @@ Following are all of the possible properties of `config`:
 
 Must be provided if the CLI feature is to be used.
 
+### `bugs`
+
+> URL where the end-user should report bugs
+
+Must be provided if the CLI feature is to be used.
+
 ### `packageJson`
 
 > Whether to allow [end user configuration via `package.json`](#end-user-configuration-via-packagejson)
