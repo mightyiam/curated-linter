@@ -6,6 +6,38 @@
 
 Makes curated ESLint linters, like [standard](http://standardjs.com/)
 
+## Table of contents
+
+<!-- toc -->
+
+- [What is a curated linter?](#what-is-a-curated-linter)
+- [Example](#example)
+  * [`package.json`:](#packagejson)
+  * [`index.js`](#indexjs)
+- [API](#api)
+  * [`new CuratedLinter(getConfig)`](#new-curatedlintergetconfig)
+- [`config`](#config)
+  * [`name`](#name)
+  * [`bugs`](#bugs)
+  * [`packageJson`](#packagejson)
+  * [`gitIgnore`](#gitignore)
+  * [`ignore`](#ignore)
+  * [`curatedExtensions`](#curatedextensions)
+  * [`CLIEngineOptions`](#cliengineoptions)
+  * [`formatter`](#formatter)
+  * [`defaultFiles`](#defaultfiles)
+- [End user API](#end-user-api)
+  * [`#lintText(text, config)`](#%23linttexttext-config)
+  * [`#lintFiles(files, config)`](#%23lintfilesfiles-config)
+  * [The ESLint results object](#the-eslint-results-object)
+- [End user CLI](#end-user-cli)
+- [End user configuration via `package.json`](#end-user-configuration-via-packagejson)
+- [End user overrides](#end-user-overrides)
+  * [Example of protected `config` using proxies](#example-of-protected-config-using-proxies)
+- [Curated extensions](#curated-extensions)
+
+<!-- tocstop -->
+
 ## What is a curated linter?
 
 - a linter based on [ESLint’s `CLIEngine`](http://eslint.org/docs/developer-guide/nodejs-api#cliengine)
