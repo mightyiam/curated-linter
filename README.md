@@ -34,18 +34,18 @@ Yes, the CLI is the same module as the API.
 
 ### `index.js`
 
-For instantiation, we do not provide an `options` object—we provide a function that will return a new `options` object with each call—a getter.
+For instantiation, we do not provide an `config` object—we provide a function that will return a new `config` object with each call—a getter.
 
 ```js
 const CuratedLinter = require('curated-linter')
 
-// `options` getter function
-const getOptions = () => ({
+// `config` getter function
+const getConfig = () => ({
   name: 'nofoobar', // CLI name and `package.json` config key
   packageJson: true, // read end user config from `package.json`
   gitIgnore: true, // (also) ignore what git ignores
-  formatter: (results, options) => { // customize your CLI error output
-    return `${options.name}: Nope. Do not use \`foo\` or \`bar\``
+  formatter: (results, config) => { // customize your CLI error output
+    return `${config.name}: Nope. Do not use \`foo\` or \`bar\``
     // or… something more real than this
   },
   CLIEngineOptions: { // options for ESLint’s `CLIEngine`
@@ -57,10 +57,10 @@ const getOptions = () => ({
     }
     // for more `CLIEngine` options: http://eslint.org/docs/developer-guide/nodejs-api#cliengine
   }
-  // not all curated-linter options are not used in this example
+  // not all curated-linter configuration options are used in this example
 })
 
-const noFoobar = new CuratedLinter(getOptions)
+const noFoobar = new CuratedLinter(getConfig)
 
 // The API is ready. Now just export it!
 module.exports = noFoobar
@@ -70,24 +70,24 @@ This example hopefully provided you with a basic understanding. Read below for t
 
 ## API
 
-### `new CuratedLinter(getOptions)`
+### `new CuratedLinter(getConfig)`
 
 > Constructs a curated linter
 
 This is the main export of this package.
 
-`getOptions` must be a function that returns a new [`options`](#options) object with each call.
+`getConfig` must be a function that returns a new [`config`](#config) object with each call.
 
 
-## `options`
+## `config`
 
 > Contains all of the configuration, policy and behavior of a desired curated linter
 
-The `options` object is provided to the curated linter instance firstly via the `getOptions` [constructor](#new-curatedlintergetoptions) argument.
+The `config` object is provided to the curated linter instance firstly via the `getConfig` [constructor](#new-curatedlintergetconfig) argument.
 
-It can also be provided to the [`lintText`](#linttexttext-options) and [`lintFiles`](#lintfilesfiles-options) methods, for the sake of [possibly allowing the end users to override or extend the curated configuration](#end-user-overrides).
+It can also be provided to the [`lintText`](#linttexttext-config) and [`lintFiles`](#lintfilesfiles-config) methods, for the sake of [possibly allowing the end users to override or extend the curated configuration](#end-user-overrides).
 
-Following are all of the possible properties of `options`:
+Following are all of the possible properties of `config`:
 
 ### `name`
 
@@ -127,9 +127,9 @@ Tip: if you can’t find a certain property on this interface, take a look at th
 
 If this is a string, it must represent a [built-in ESLint formatter](http://eslint.org/docs/user-guide/formatters/).
 
-Otherwise, it must be a function. It will be called as `formatter(results, options)`. Except for the `options` argument, the signature is identical to [ESLint formatters](http://eslint.org/docs/developer-guide/working-with-custom-formatters).
+Otherwise, it must be a function. It will be called as `formatter(results, config)`. Except for the `config` argument, the signature is identical to [ESLint formatters](http://eslint.org/docs/developer-guide/working-with-custom-formatters).
 
-The `options` provided will be post [user overrides](#user-overrides).
+The `config` provided will be post [user overrides](#user-overrides).
 
 ### `defaultFiles`
 
@@ -141,20 +141,20 @@ An array of [glob](https://www.npmjs.com/package/glob#glob-primer)s.
 
 ## End user API
 
-### `#lintText(text, options)`
+### `#lintText(text, config)`
 
 > Lints provided text
 
 - `text`: text (source code) to lint
-- [`options`](#options)
+- [`config`](#config)
 - returns a promise of the [ESLint results object](#the-eslint-results-object)
 
-### `#lintFiles(files, options)`
+### `#lintFiles(files, config)`
 
 > Lints files
 
 - `files`: array of [glob](https://www.npmjs.com/package/glob#glob-primer)s of files to lint
-- [`options`](#options)
+- [`config`](#config)
 - returns a promise of the [ESLint results object](#the-eslint-results-object)
 
 ### The ESLint results object
@@ -165,7 +165,7 @@ Documentation of the ESLint results object can be found in [ESLint’s `#execute
 
 ## End user CLI
 
-To provide end users with a CLI, the [`options.name`](#name) property must be provided.
+To provide end users with a CLI, the [`config.name`](#name) property must be provided.
 
 Also, there must be a [`package.json` `bin` property](https://docs.npmjs.com/files/package.json#bin), like so:
 
@@ -180,13 +180,13 @@ Also, there must be a [`package.json` `bin` property](https://docs.npmjs.com/fil
 
 The value of the property under `bin` (here `"index.js"`) must be *a module where `CuratedLinter` is instantiated*. No further method calling required. Thus your [main export](https://docs.npmjs.com/files/package.json#main) and your `bin` can be the same module.
 
-To allow this unified `main`/`bin` "magic" <!-- add link to code -->, the property under the `bin` property *must be identical* to your [`options.name`](#name).
+To allow this unified `main`/`bin` "magic" <!-- add link to code -->, the property under the `bin` property *must be identical* to your [`config.name`](#name).
 
 ## End user configuration via `package.json`
 
-If [`options.packageJson`](#packagejson-1) is `true`, then options from a *certain property* of the end user’s `package.json` will be read and applied as explained in [user overrides](#user-overrides). That *certain property* is [`options.name`](#name).
+If [`config.packageJson`](#packagejson-1) is `true`, then a config from a *certain property* of the end user’s `package.json` will be read and applied as explained in [user overrides](#user-overrides). That *certain property* is [`config.name`](#name).
 
-For example if `options.name === 'nofoobar'`:
+For example if `config.name === 'nofoobar'`:
 
 ```json
 {
@@ -199,15 +199,15 @@ For example if `options.name === 'nofoobar'`:
 
 ## End user overrides
 
-This is about implementing a policy regarding *whether*, *what* and *how* the end user of the curated linter is allowed to override or extend, the curated `options`.
+This is about implementing a policy regarding *whether*, *what* and *how* the end user of the curated linter is allowed to override or extend, the curated `config`.
 
-You may implement whatever policy you like, by having your `getOptions` return a version of `options` that is protected using proxies.
+You may implement whatever policy you like, by having your `getConfig` return a version of `config` that is protected using proxies.
 
-Whether from [end user options in `package.json`](#end-user-configuration-via-packagejson) or from the end user passing `options` to `lintText` or `lintFiles`, those user `options` will be merged into the `options` that your `getOptions` returned, using [deep assignment](https://www.npmjs.com/package/deep-assign). This means that, if your `getOptions` provides an unprotected `options`, the user will be able to override any property in that tree.
+Whether from [end user `config` in `package.json`](#end-user-configuration-via-packagejson) and/or from the end user passing `config` to `lintText` or `lintFiles`, those user `config`s will be merged into the `config` that your `getConfig` returned, using [deep assignment](https://www.npmjs.com/package/deep-assign). This means that, if your `getConfig` provides an unprotected `config`, the user will be able to override any property in that tree.
 
-Overrides occur on method invocation (the CLI also uses those methods). On each such invocation, your curated `options` are retrieved by calling your `getOptions`. Thus, overrides applied on one method call will *not* persist on the instance.
+Overrides occur on method invocation (the CLI also uses those methods). On each such invocation, your curated `config` is retrieved by calling your `getConfig`. Thus, overrides applied on one method call will *not* persist on the instance.
 
-### Example of protected `options` using proxies
+### Example of protected `config` using proxies
 
 The only allowed override is that the `id-blacklist` rule can be *added more identifiers*:
 
@@ -225,7 +225,7 @@ const append = {
   }
 }
 
-const getOptions = () => (new Proxy({
+const getConfig = () => (new Proxy({
   CLIEngineOptions: new Proxy({
     name: 'nofoobar',
     rules: new Proxy({
@@ -237,7 +237,7 @@ const getOptions = () => (new Proxy({
   }, frozen)
 }, frozen))
 
-const noFooBar = new CuratedLinter(getOptions)
+const noFooBar = new CuratedLinter(getConfig)
 module.exports = noFooBar
 ```
 
@@ -249,4 +249,4 @@ This feature allows official, curated extensions to be automatically used if the
 
 An official, curated extension is a separate [ESLint sharable configuration package](http://eslint.org/docs/developer-guide/shareable-configs).
 
-Each member of a provided [`options.curatedExtensions`](#curatedextensions) array is expected to be a name of an ESLint shareable configuration. The `eslint-config-` prefix may be omitted. Each such package, *if the end user has it installed*, will be pushed to the end of the [`options.CLIEngineOptions`](#cliengineoptions)`.baseConfig.extends` array (will be created if `undefined` and will be made into an array if `false`).
+Each member of a provided [`config.curatedExtensions`](#curatedextensions) array is expected to be a name of an ESLint shareable configuration. The `eslint-config-` prefix may be omitted. Each such package, *if the end user has it installed*, will be pushed to the end of the [`config.CLIEngineOptions`](#cliengineoptions)`.baseConfig.extends` array (will be created if `undefined` and will be made into an array if `false`).
