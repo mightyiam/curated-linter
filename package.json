@@ -1,6 +1,6 @@
 {
   "name": "curated-linter",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Creates curated linters, like standard",
   "main": "lib/index.js",
   "directories": {
