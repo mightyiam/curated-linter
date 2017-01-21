@@ -74,9 +74,12 @@ This example hopefully provided you with a basic understanding. Read below for t
 
 > Constructs a curated linter
 
+This is the main export of this package.
+
 `getOptions` must be a function that returns a new [`options`](#options) object with each call.
 
-### `options`
+
+## `options`
 
 > Contains all of the configuration, policy and behavior of a desired curated linter
 
@@ -86,31 +89,31 @@ It can also be provided to the [`lintText`](#linttexttext-options) and [`lintFil
 
 Following are all of the possible properties of `options`:
 
-#### `name`
+### `name`
 
 > Machine name of the curated linter
 
 Must be provided if the CLI feature is to be used.
 
-#### `packageJson`
+### `packageJson`
 
 > Whether to allow [end user configuration via `package.json`](#end-user-configuration-via-packagejson)
 
-#### `gitIgnore`
+### `gitIgnore`
 
 > Whether to (also) ignore according to `.gitignore`
 
 This determines whether, in addition to any other ignore configuration, to ignore files that are ignored by a possibly existing `.gitignore`.
 
-#### `ignore`
+### `ignore`
 
 > List of [glob](https://www.npmjs.com/package/glob#glob-primer) file patterns to ignore
 
-#### `curatedExtensions`
+### `curatedExtensions`
 
 > List of [official curated extensions](#curated-extensions)
 
-#### `CLIEngineOptions`
+### `CLIEngineOptions`
 
 > Will be passed to [`CLIEngine`](http://eslint.org/docs/developer-guide/nodejs-api#cliengine)
 
@@ -118,7 +121,7 @@ This is where you may define your rules, plugins, etc.
 
 Tip: if you can’t find a certain property on this interface, take a look at the `baseConfig` property.
 
-#### `formatter`
+### `formatter`
 
 > Formats the CLI error messages
 
@@ -128,13 +131,15 @@ Otherwise, it must be a function. It will be called as `formatter(results, optio
 
 The `options` provided will be post [user overrides](#user-overrides).
 
-#### `defaultFiles`
+### `defaultFiles`
 
 > Files to lint by default
 
 Whether via the CLI or via `#lintFiles`, if no files provided, these will be linted.
 
 An array of [glob](https://www.npmjs.com/package/glob#glob-primer)s.
+
+## End user API
 
 ### `#lintText(text, options)`
 
