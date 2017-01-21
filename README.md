@@ -168,12 +168,12 @@ Also, there must be a [`package.json` `bin` property](https://docs.npmjs.com/fil
 {
   "name": "nofoobar",
   "bin": {
-    "nofoobar": "./index.js"
+    "nofoobar": "index.js"
   }
 }
 ```
 
-`./index.js` must be *a module where `CuratedLinter` is instantiated*. No further method calling required. Thus your [main export](https://docs.npmjs.com/files/package.json#main) and your `bin` can be the same module.
+The value of the property under `bin` (here `"index.js"`) must be *a module where `CuratedLinter` is instantiated*. No further method calling required. Thus your [main export](https://docs.npmjs.com/files/package.json#main) and your `bin` can be the same module.
 
 To allow this unified `main`/`bin` "magic" <!-- add link to code -->, the property under the `bin` property *must be identical* to your [`options.name`](#name).
 
