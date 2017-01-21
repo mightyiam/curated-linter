@@ -14,11 +14,23 @@ Makes curated ESLint linters, like [standard](http://standardjs.com/)
 - the extent to which the end-user is able to override and/or extend the curated configuration [is configurable](#end-user-overrides)
 - may or may not allow [using an official, curated, set of extensions](#curated-extensions)
 - may have either or both of a [(promise) API](#api) and a [CLI](#cli)
+- CLI may report using a custom [ESLint formatter](http://eslint.org/docs/user-guide/formatters/)
 - and more features, that are not in ESLint
 
 ## Example
 
 In this example we create our curated linter as an npm package.
+
+### `package.json`:
+```json
+{
+	"name": "nofoobar",
+	"main": "index.js",
+	"bin": { "nofoobar": "index.js" }
+}
+```
+
+Yes, the CLI is the same module as the API.
 
 ### `index.js`
 
@@ -54,18 +66,7 @@ const noFoobar = new CuratedLinter(getOptions)
 module.exports = noFoobar
 ```
 
-But, wait, tools like this are mostly used from the CLI, right? *Right*. No worries. We have you covered:
-
-### `package.json`:
-```json
-{
-	"name": "nofoobar",
-	"main": "index.js",
-	"bin": { "nofoobar": "index.js" }
-}
-```
-
-Yes, the CLI is the same module as the API! If you wish to provide your end users with a CLI, then just specify the `bin` property.
+This example hopefully provided you with a basic understanding. Read below for the API and some awesome features.
 
 ## API
 
@@ -88,6 +89,8 @@ Following are all of the possible properties of `options`:
 #### `name`
 
 > Machine name of the curated linter
+
+Must be provided if the CLI feature is to be used.
 
 #### `packageJson`
 
@@ -154,6 +157,25 @@ An array of [glob](https://www.npmjs.com/package/glob#glob-primer)s.
 > Resolved value of promises returned by `#lintFiles` and `#lintText`
 
 Documentation of the ESLint results object can be found in [ESLint’s `#executeOnFiles` documentation](http://eslint.org/docs/developer-guide/nodejs-api#executeonfiles).
+
+## End user CLI
+
+To provide end users with a CLI, the [`options.name`](#name) property must be provided.
+
+Also, there must be a [`package.json` `bin` property](https://docs.npmjs.com/files/package.json#bin), like so:
+
+```json
+{
+  "name": "nofoobar",
+  "bin": {
+    "nofoobar": "./index.js"
+  }
+}
+```
+
+`./index.js` must be *a module where `CuratedLinter` is instantiated*. No further method calling required. Thus your [main export](https://docs.npmjs.com/files/package.json#main) and your `bin` can be the same module.
+
+To allow this unified `main`/`bin` "magic" <!-- add link to code -->, the property under the `bin` property *must be identical* to your [`options.name`](#name).
 
 ## End user configuration via `package.json`
 
