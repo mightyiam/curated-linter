@@ -45,6 +45,7 @@
     "standard": "^8.6.0"
   },
   "dependencies": {
+    "clone": "^2.1.0",
     "deep-assign": "^2.0.0",
     "lint-files": "^1.0.0",
     "lint-text": "^1.0.0",
