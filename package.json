@@ -48,7 +48,7 @@
     "clone": "^2.1.0",
     "deep-assign": "^2.0.0",
     "lint-files": "^1.0.0",
-    "lint-text": "^1.0.0",
+    "lint-text": "^1.0.1",
     "meow": "^3.7.0",
     "pkg-conf": "^2.0.0"
   },
