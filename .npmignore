@@ -1,4 +1,4 @@
 **/*
 !lib/**/*.js
 lib/**/*.test.js
-lib/**/*.fixture
+lib/fixture

@@ -1,1 +1,8 @@
-{}
+{
+  "name": "fixture",
+  "foolint": {
+    "user": true,
+    "null": null,
+    "array": ["user"]
+  }
+}
