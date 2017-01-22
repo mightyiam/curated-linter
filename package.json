@@ -54,8 +54,7 @@
   },
   "standard": {
     "ignore": [
-      "lib/cli.fixture/files/*.js",
-      "lib/lint-files.fixture/index.js"
+      "lib/fixture/!(linter).js"
     ]
   },
   "nyc": {
@@ -66,7 +65,7 @@
     ],
     "exclude": [
       "**/*.test.js",
-      "**/*.fixture"
+      "**/fixture"
     ],
     "functions": 100,
     "branches": 100,
