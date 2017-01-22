@@ -28,6 +28,7 @@ Feel free to contribute.
   * [`packageJson`](#packagejson)
   * [`gitIgnore`](#gitignore)
   * [`ignore`](#ignore)
+  * [`cwd`](#cwd)
   * [`curatedExtensions`](#curatedextensions)
   * [`CLIEngineOptions`](#cliengineoptions)
   * [`formatter`](#formatter)
@@ -149,9 +150,17 @@ Must be provided if the CLI feature is to be used.
 
 This determines whether, in addition to any other ignore configuration, to ignore files that are ignored by a possibly existing `.gitignore`.
 
+The `.gitignore` that may be read is the one that may be at the same directory as the `package.json`.
+
 ### `ignore`
 
 > List of [glob](https://www.npmjs.com/package/glob#glob-primer) file patterns to ignore
+
+### `cwd`
+
+> Relative file paths will be resolved to this
+
+Defaults to `process.cwd()`.
 
 ### `curatedExtensions`
 
@@ -164,6 +173,8 @@ This determines whether, in addition to any other ignore configuration, to ignor
 This is where you may define your rules, plugins, etc.
 
 Tip: if you can’t find a certain property on this interface, take a look at the `baseConfig` property.
+
+**Caveat**: For the sake of the [`config.gitIgnore`](#gitignore) feature, CuratedLinter does its own file deglobbing and serves ESLint absolute file paths. Therefore, instead of using `config.CLIEngineOptions.ignore(*)` [options](http://eslint.org/docs/developer-guide/nodejs-api#cliengine), it is recommended that you set `config.CLIEngineOptions.ignore` to `false` and use [`config.ignore`](#ignore), instead.
 
 ### `formatter`
 
