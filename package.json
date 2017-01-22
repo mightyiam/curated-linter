@@ -47,15 +47,17 @@
   "dependencies": {
     "clone": "^2.1.0",
     "deep-assign": "^2.0.0",
+    "deglob": "^2.1.0",
     "lint-files": "^1.0.0",
     "lint-text": "^1.0.1",
     "meow": "^3.7.0",
+    "pify": "https://api.github.com/repos/mightyiam/pify/tarball/multiargs-error",
     "pkg-conf": "^2.0.0"
   },
   "standard": {
     "ignore": [
-      "lib/cli.fixture/files/*.js",
-      "lib/lint-files.fixture/index.js"
+      "lib/fixture/!(linter).js",
+      "lib/fixture/subdir"
     ]
   },
   "nyc": {
@@ -66,7 +68,7 @@
     ],
     "exclude": [
       "**/*.test.js",
-      "**/*.fixture"
+      "**/fixture"
     ],
     "functions": 100,
     "branches": 100,
