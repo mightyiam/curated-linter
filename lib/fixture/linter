@@ -6,7 +6,7 @@ const CuratedLinter = require('..')
 new CuratedLinter(() => ({
   name: 'linter',
   formatter: results => JSON.stringify(results),
-  defaultFiles: ['yoda.js'],
+  defaultFiles: ['no-unused-expressions.js'],
   CLIEngineOptions: {
     baseConfig: {
       extends: 'standard'
