@@ -39,7 +39,7 @@
     "lodash.ismatch": "^4.4.0",
     "markdown-toc": "^1.1.0",
     "mock-path-with-simple-spy": "^4.0.0",
-    "nyc": "^10.1.2",
+    "nyc": "^11.0.2",
     "pify": "https://api.github.com/repos/mightyiam/pify/tarball/multiargs-error",
     "simple-spy": "^2.1.0",
     "standard": "^10.0.0"
