@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/mightyiam/curated-linter#readme",
   "devDependencies": {
-    "ava": "^0.19.1",
+    "ava": "^0.21.0",
     "codecov": "^2.0.1",
     "dargs": "^5.1.0",
     "is-plain-obj": "^1.1.0",
